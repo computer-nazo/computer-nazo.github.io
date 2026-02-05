@@ -1,1 +1,15 @@
+<html>
+  <p>/英数一文字ずつ続けて入力</p>
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "1234567";
 
+        if (userAnswer === correctAnswer) {
+            window.location.href = "10.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  </script>
+</html>
