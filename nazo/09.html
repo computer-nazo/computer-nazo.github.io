@@ -1,11 +1,11 @@
 <html>
-  <p>/英数一文字ずつ続けて入力</p>
+  <p>/文字を問題順に続けて入力</p>
   <input type="text" id="answerInput" placeholder="答えを入力">
   <button onclick="checkAnswer()">send</button>
   <script>
   function checkAnswer() {
     const userAnswer = document.getElementById('answerInput').value;
-    const correctAnswer = "os34567";
+    const correctAnswer = "osEeiぐ7";
 
         if (userAnswer === correctAnswer) {
             window.location.href = "10.html"
