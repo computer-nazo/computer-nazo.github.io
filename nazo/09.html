@@ -3,6 +3,7 @@
   <input type="text" id="answerInput" placeholder="答えを入力">
   <button onclick="checkAnswer()">send</button>
   <script>
+  function checkAnswer() {
     const userAnswer = document.getElementById('answerInput').value;
     const correctAnswer = "1234567";
 
@@ -11,5 +12,6 @@
         } else {
             window.location.href = "mistake.html"
         }
+  }
   </script>
 </html>
