@@ -4,19 +4,19 @@
   <button onclick="puSh()">回数</button>
   <button onclick="checkAnswer()">答え合わせ</button>
   <script>
-  let pushPass = 0
-    function puSh() {
-    pushPass += 1;
-    }
-    function checkAnswer() {
-    const userAnswer = document.getElementById('answerInput').value;
-    const correctAnswer = "9";
+  let count = 0
+  function puSh() {
+  count++;
+  }
+  function checkAnswer() {
+  const userAnswer = document.getElementById('answerInput').value;
+  const correctAnswer = "9";
 
-        if (pushPass === correctAnswer) {
-            window.location.href = "15.html"
-        } else {
-            window.location.href = "mistake.html"
-        }
+    if (pushPass === correctAnswer) {
+         window.location.href = "15.html"
+    } else {
+         window.location.href = "mistake.html"
     }
+  }
   </script>
 </html>
