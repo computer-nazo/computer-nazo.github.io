@@ -1,11 +1,11 @@
 <html>
-  <P>信号機の色の順番を答えろ。左⇛右</P>
+  <P>信号機の色の順番を答えろ。左⇛右　英語小文字一文字づつ</P>
   <input type="text" id="answerInput" placeholder="答えを入力">
   <button onclick="checkAnswer()">send</button>
   <script>
     function checkAnswer() {
     const userAnswer = document.getElementById('answerInput').value;
-    const correctAnswer = "緑黃赤";
+    const correctAnswer = "gyr";
 
         if (userAnswer === correctAnswer) {
             window.location.href = "21.html"
