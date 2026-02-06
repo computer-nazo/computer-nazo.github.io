@@ -1,0 +1,18 @@
+<html>
+  <p>九九の表の中にある1の数を答えろ</p>
+  <img src="01.jpeg">
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "21";
+
+        if (userAnswer === correctAnswer) {
+            window.location.href = "17.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  }
+  </script>
+</html>
