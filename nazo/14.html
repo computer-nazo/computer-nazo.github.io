@@ -3,7 +3,7 @@
   <audio src="01.mp3" type="audio/mp3" preload="auto"></audio>
   <button onclick="checkAnswer()">答え合わせ</button>
   <button id="countBtn">回数</button>
-  <p>回数: <span id="display">0</span></p>
+  <p><span id="display">0</span></p>
   <script>
   let count = 0; // カウントを保持する変数
   const btn = document.getElementById('countBtn');
@@ -16,7 +16,6 @@
   });
   function checkAnswer() {
   const correctAnswer = "9";
-  const count = count;
 
     if (count === correctAnswer) {
          window.location.href = "15.html"
