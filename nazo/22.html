@@ -1,0 +1,25 @@
+<html>
+  <p>今までの問題で流れていた”こんにちは”の数を答えろ</p>
+  <button onclick="checkAnswer()">答え合わせ</button>
+  <button id="countBtn">回数</button>
+  <p><span id="display">0</span></p>
+  <script>
+  let count = 0; // カウントを保持する変数
+  const btn = document.getElementById('countBtn');
+  const display = document.getElementById('display');
+
+  // ボタンが押された時の処理
+  btn.addEventListener('click', () => {
+    count++; // count += 1 と同じ（1を足す）
+    display.textContent = count; // 画面の表示を更新
+  });
+  function checkAnswer() {
+
+    if (count ===　4) {
+         window.location.href = "23.html"
+    } else {
+         window.location.href = "mistake.html"
+    }
+  }
+  </script>
+</html>
