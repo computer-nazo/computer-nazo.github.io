@@ -1,0 +1,22 @@
+<html>
+  <p>この音声の中で日付を言った数を答えろ</p>
+  <audio src="01.mp3" type="audio/mp3" preload="auto"></audio>
+  <button onclick="puSh()">回数</button>
+  <button onclick="checkAnswer()">答え合わせ</button>
+  <script>
+  let pushPass = 0
+    function puSh() {
+    pushPass += 1;
+    }
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "9";
+
+        if (pushPass === correctAnswer) {
+            window.location.href = "15.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+    }
+  </script>
+</html>
