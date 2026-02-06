@@ -1,0 +1,18 @@
+<html>
+  <p>J+x=12となるxの値を求めろ（不可解あり）</p>
+  <img src="02.jpg">
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "1";
+
+        if (userAnswer === correctAnswer) {
+            window.location.href = "19.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  }
+  </script>
+</html>
