@@ -1,0 +1,17 @@
+<html>
+  <p><a href="12.html">森の中にある雑草</a>を書け</p>
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "森の中にある雑草";
+
+        if (userAnswer === correctAnswer) {
+            window.location.href = "13.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  }
+  </script>
+</html>
