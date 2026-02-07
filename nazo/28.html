@@ -1,0 +1,17 @@
+<html>
+  <p>2000円札のウラ面には誰が描かれているか答えよ</p>
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "紫式部";
+
+        if (userAnswer === correctAnswer) {
+            window.location.href = "29.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  }
+  </script>
+</html>
