@@ -1,0 +1,17 @@
+<html>
+  <p>これらの文章からパスワードを解読せよ（ただし英語小文字6文字）<br>・明るい星<br>・”ハリーポッター”の登場人物</p>
+  <input type="text" id="answerInput" placeholder="答えを入力">
+  <button onclick="checkAnswer()">send</button>
+  <script>
+    function checkAnswer() {
+    const userAnswer = document.getElementById('answerInput').value;
+    const correctAnswer = "sirius";
+
+        if (userAnswer === correctAnswer) {
+            window.location.href = "25.html"
+        } else {
+            window.location.href = "mistake.html"
+        }
+  }
+  </script>
+</html>
