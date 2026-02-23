@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Simple Run</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        #ui { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; pointer-events: none; }
+        #msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+               color: white; font-size: 48px; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="ui">Score: <span id="score">0</span></div>
+    <div id="msg">GAME OVER<br><span style="font-size:20px">Click to Restart</span></div>
+    <button onclick="location.href='https://computer-nazo.github.io/gift.html'">back</button>
+
+    <!-- Three.jsの読み込み -->
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // --- 設定 ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // 空色
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // --- ライト ---
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 7.5);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x404040));
+
+        // --- プレイヤー (赤い立方体) ---
+        const playerGeo = new THREE.BoxGeometry(1, 1, 1);
+        const playerMat = new THREE.MeshStandardMaterial({ color: 0xff4757 });
+        const player = new THREE.Mesh(playerGeo, playerMat);
+        player.position.y = 0.5;
+        scene.add(player);
+
+        // --- 地面 ---
+        const floorGeo = new THREE.PlaneGeometry(10, 1000);
+        const floorMat = new THREE.MeshStandardMaterial({ color: 0x2ed573 });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+
+        camera.position.set(0, 3, 6);
+        camera.lookAt(0, 0, 0);
+
+        // --- 変数 ---
+        let score = 0;
+        let isJumping = false;
+        let vY = 0;
+        let enemies = [];
+        let gameActive = true;
+
+        // ジャンプ操作
+        window.addEventListener('mousedown', () => {
+            if (!gameActive) location.reload();
+            if (!isJumping) { vY = 0.15; isJumping = true; }
+        });
+
+        // 敵の生成
+        function spawnEnemy() {
+            if (!gameActive) return;
+            const enemyGeo = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+            const enemyMat = new THREE.MeshStandardMaterial({ color: 0x2f3542 });
+            const enemy = new THREE.Mesh(enemyGeo, enemyMat);
+            enemy.position.set((Math.random() - 0.5) * 4, 0.4, -50);
+            scene.add(enemy);
+            enemies.push(enemy);
+            setTimeout(spawnEnemy, Math.max(500, 1500 - score * 10)); // 徐々に早く
+        }
+        spawnEnemy();
+
+        // --- メインループ ---
+        function animate() {
+            if (!gameActive) return;
+            requestAnimationFrame(animate);
+
+            // プレイヤーの物理計算
+            player.position.y += vY;
+            if (isJumping) {
+                vY -= 0.008; // 重力
+                if (player.position.y <= 0.5) {
+                    player.position.y = 0.5;
+                    vY = 0;
+                    isJumping = false;
+                }
+            }
+
+            // 敵の移動と衝突判定
+            enemies.forEach((enemy, index) => {
+                enemy.position.z += 0.2 + (score * 0.005); // 徐々に加速
+                
+                // 衝突判定
+                const d = player.position.distanceTo(enemy.position);
+                if (d < 0.8) {
+                    gameActive = false;
+                    document.getElementById('msg').style.display = 'block';
+                }
+
+                // 画面外に出たら削除
+                if (enemy.position.z > 5) {
+                    scene.remove(enemy);
+                    enemies.splice(index, 1);
+                    score++;
+                    document.getElementById('score').innerText = score;
+                }
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // 画面リサイズ対応
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
+</html>
