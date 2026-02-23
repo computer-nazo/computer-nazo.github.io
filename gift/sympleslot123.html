@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { text-align: center; font-family: monospace; padding: 50px; }
+        .slot { display: inline-block; margin: 10px; }
+        .num { font-size: 60px; display: block; border: 1px solid #ccc; width: 80px; margin-bottom: 10px; }
+        button { cursor: pointer; padding: 5px 10px; }
+        #start { margin-bottom: 30px; padding: 10px 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <button id="start" onclick="start()">START</button><br>
+
+    <div class="slot">
+        <span id="r1" class="num">0</span>
+        <button class="stop" onclick="stop(0)" disabled>STOP</button>
+    </div>
+    <div class="slot">
+        <span id="r2" class="num">0</span>
+        <button class="stop" onclick="stop(1)" disabled>STOP</button>
+    </div>
+    <div class="slot">
+        <span id="r3" class="num">0</span>
+        <button class="stop" onclick="stop(2)" disabled>STOP</button>
+    </div>
+
+    <h2 id="msg"></h2>
+
+    <script>
+        let timers = [];
+        let stopCount = 0;
+
+        function start() {
+            stopCount = 0;
+            document.getElementById('msg').innerText = "";
+            document.getElementById('start').disabled = true;
+            const btns = document.querySelectorAll('.stop');
+            
+            for (let i = 0; i < 3; i++) {
+                btns[i].disabled = false;
+                timers[i] = setInterval(() => {
+                    document.getElementById('r' + (i + 1)).innerText = Math.floor(Math.random() * 10);
+                }, 50);
+            }
+        }
+
+        function stop(i) {
+            clearInterval(timers[i]);
+            document.querySelectorAll('.stop')[i].disabled = true;
+            stopCount++;
+
+            if (stopCount === 3) {
+                const v = [
+                    document.getElementById('r1').innerText,
+                    document.getElementById('r2').innerText,
+                    document.getElementById('r3').innerText
+                ];
+                document.getElementById('msg').innerText = (v[0]===v[1] && v[1]===v[2]) ? "WIN!" : "LOSE";
+                document.getElementById('start').disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
