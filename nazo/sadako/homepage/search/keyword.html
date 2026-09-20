@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>Sadako - top</title>
+    <style>
+      .header {background-color: darkblue; color: white; border-radius: 10px;}
+      .header-input {height: 35px; border-radius: 10px;}
+      .header-searchbtn {height: 35px; border-radius: 10px;}
+      .contents-block {display: flex;}
+      .contents-space {width: 5%;}
+      .contents-left {background-color: white; border-radius: 10px; color: black; width: 65%; box-shadow: 5px 5px 20px gray;}
+      .contents-right {background-color: white; border-radius: 10px; color: black; width: 20%; box-shadow: 5px 5px 20px gray;}
+      .contents-news-block {display: flex;}
+      .contents-news-box {background-color: lightgray; border: 2px black; width: 30%;}
+    </style>
+  </head>
+  <body>
+    <div class="header"><h1>Sadako 4444 
+　　　　<input id="SearchBox" class="header-input" value="検索ワードを入力"></input><button class="header-searchbtn" onclick="Search()">検索</button>
+　　　　</h1>
+　　</div>
+    <div class="contents-block">
+      <div class="contents-space"></div>
+      <div class="contents-left">
+        <h2>Sadako 4444</h2>
+        <h3>検索結果</h3>
+        <p><a href="../../../internet/keyword-com/index.html">keyword.com - 世界中のキーワードを探す</a></p>
+      </div>
+      <div class="contents-space"></div>
+      <div class="contents-right">
+        <p><a href="../index.html">ホームページ</a></p>
+      </div>
+    </div>
+    <script>
+      function Search() {
+        const SearchBox = document.getElementById("SearchBox").value;
+        if (SearchBox === "keyword") {
+          window.location.href="../search/keyword.html";
+        } else if (SearchBox === "122573") {
+          window.location.href="../search/122573.html";
+        } else {
+          window.location.href="../search/keywordnotfound.html";
+        }
+      }
+    </script>
+  </body>
+</html>
