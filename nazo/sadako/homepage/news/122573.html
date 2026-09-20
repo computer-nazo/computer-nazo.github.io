@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>Sadako - top</title>
+    <style>
+      .header {background-color: darkblue; color: white; border-radius: 10px;}
+      .header-input {height: 35px; border-radius: 10px;}
+      .header-searchbtn {height: 35px; border-radius: 10px;}
+      .contents-block {display: flex;}
+      .contents-space {width: 5%;}
+      .contents-left {background-color: white; border-radius: 10px; color: black; width: 65%; box-shadow: 5px 5px 20px gray;}
+      .contents-right {background-color: white; border-radius: 10px; color: black; width: 20%; box-shadow: 5px 5px 20px gray;}
+      .contents-news-block {display: flex;}
+      .contents-news-box {background-color: lightgray; border: 2px black; width: 30%;}
+    </style>
+  </head>
+  <body>
+    <div class="header"><h1>Sadako 4444 
+　　　　<input id="SearchBox" class="header-input" value="検索ワードを入力"></input><button class="header-searchbtn" onclick="Search()">検索</button>
+　　　　</h1>
+　　</div>
+    <div class="contents-block">
+      <div class="contents-space"></div>
+      <div class="contents-left">
+        <h2>Sadako 4444</h2>
+        <h3>news</h3>
+        <h3>夏が終わりを迎えています</h3>
+        全国的に気温が下がり始め、朝晩には秋の気配が漂い始めている。こうした季節の変化を受け、「夏の終わりを受け入れられない」と訴える市民からの通報が急増し、各地の警察署が対応に追われる異例の事態となっている。通報の多くは、夏をこよなく愛する市民団体「夏愛好委員会」のメンバーによるもので、警察関係者は「完全に出払った状態」と話す。
+        警察庁によると、今月に入ってから「夏が終わりそうで不安」「気温が下がっているのは異常気象ではないか」「夏を延長するための行政措置を求める」といった相談が全国で急増。週末には、夏愛好委員会のメンバーが交番に押しかけ、「まだ海水浴がしたい」「かき氷の季節を奪わないでほしい」と訴えるケースも相次いだ。ある警察署では1日で30件以上の“夏ロス通報”が寄せられ、通常業務に支障が出るほどだったという。
+        夏愛好委員会の代表者は「夏は国民の精神的支柱。終わりを迎えることに強い喪失感を覚える人が増えている。行政は季節の変化に対する心理的ケアを強化すべきだ」とコメント。委員会は今後、自治体に対し「秋の到来をゆっくりにするための啓発活動」を求める要望書を提出する予定だ。
+        一方、警察側は対応に苦慮している。ある警察幹部は「季節の変化は自然現象であり、警察の管轄ではない。だが市民の不安を無視するわけにもいかず、丁寧に説明している」と語る。通報の中には「夏を逮捕しないでほしい」「秋を取り締まってほしい」といった内容も含まれており、現場の警察官からは困惑の声が上がっている。
+        気象庁によると、今後も気温は平年並みに推移し、季節は確実に秋へ向かう見通し。心理学者は「夏の終わりに喪失感を覚えるのは自然なこと。秋の楽しみを見つけることで気持ちの切り替えがしやすくなる」と話している。
+      </div>
+      <div class="contents-space"></div>
+      <div class="contents-right">
+        <p><a href="index.html">ホームページ</a></p>
+      </div>
+    </div>
+    <script>
+      function Search() {
+        const SearchBox = document.getElementById("SearchBox").value;
+        if (SearchBox === "keyword") {
+          window.location.href="../search/keyword.html";
+        } else if (SearchBox === "122573") {
+          window.location.href="../search/122573.html";
+        } else {
+          window.location.href="../search/keywordnotfound.html";
+        }
+      }
+    </script>
+  </body>
+</html>
