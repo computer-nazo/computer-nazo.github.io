@@ -1,5 +1,5 @@
 const SideBar = document.getElementById("SideBar");
-SideBar.innerHTML = '<a href="https://computer-nazo.github.io/nazo/sadako/homepage/index.html">ホームページ</a><br><a href="https://computer-nazo.github.io/nazo/sadako/homepage/login/index.html"></a>';
+SideBar.innerHTML = '<a href="https://computer-nazo.github.io/nazo/sadako/homepage/index.html">ホームページ</a><br><a href="https://computer-nazo.github.io/nazo/sadako/homepage/login/index.html">ログイン</a>';
 
 function Search() {
   const SearchBox = document.getElementById("SearchBox").value;
