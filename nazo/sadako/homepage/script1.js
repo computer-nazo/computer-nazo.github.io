@@ -1,3 +1,6 @@
+const SideBar = document.getElementById("SideBar");
+SideBar.innerHTML = '<a href="https://computer-nazo.github.io/nazo/sadako/homepage/index.html">ホームページ</a>';
+
 function Search() {
   const SearchBox = document.getElementById("SearchBox").value;
   if (SearchBox === "keyword") {
