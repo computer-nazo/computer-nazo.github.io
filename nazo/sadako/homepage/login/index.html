@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>Sadako - top</title>
+    <style>
+      .header {background-color: darkblue; color: white; border-radius: 10px;}
+      .all-input {height: 35px; border-radius: 10px;}
+      .all-btn {height: 35px; border-radius: 10px;}
+      .contents-block {display: flex;}
+      .contents-space {width: 5%;}
+      .contents-left {background-color: white; border-radius: 10px; color: black; width: 65%; box-shadow: 5px 5px 20px gray;}
+      .contents-right {background-color: white; border-radius: 10px; color: black; width: 20%; box-shadow: 5px 5px 20px gray;}
+      .contents-news-block {display: flex;}
+      .contents-news-box {background-color: lightgray; border: 2px black; width: 30%;}
+      .contents-loginbox {width: 100%; text-align: center;}
+    </style>
+  </head>
+  <body>
+    <div class="header"><h1>Sadako 4444 
+　　　　<input id="SearchBox" class="all-input" value="検索ワードを入力"></input><button class="all-btn" onclick="Search()">検索</button>
+　　　　</h1>
+　　</div>
+    <div class="contents-block">
+      <div class="contents-space"></div>
+      <div class="contents-left">
+        <h2>Sadako 4444</h2>
+        <h3>login</h3>
+        <div class="contents-loginbox">
+          <p id="ErrorMsg"></p>
+          <p>ユーザー名</p>
+          <input id="UserName" class="all-input">
+          <p>パスワード</p>
+          <input id="UserPwd" class="all-input" type="password">
+          <br>
+          <button class="all-btn" onclick="Login()">ログイン</button>
+        </div>
+      </div>
+      <div class="contents-space"></div>
+      <div class="contents-right" id="SideBar">
+        <p><a href="index.html">ホームページ</a></p>
+      </div>
+    </div>
+    <script src="https://computer-nazo.github.io/nazo/sadako/homepage/script1.js"></script>
+    <script src="https://computer-nazo.github.io/nazo/sadako/homepage/login/login.js"></script>
+  </body>
+</html>
