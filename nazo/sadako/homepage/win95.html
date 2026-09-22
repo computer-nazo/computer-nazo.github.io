@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Windows95</title>
+<style>
+  :root{
+    --bg:#008080; --window-bg:#c0c0c0; --titlebar:#000080; --titlebar-text:#ffffff;
+    --face:#e0e0e0; --shadow-dark:#404040; --shadow-light:#ffffff; --font:"MS PGothic","Tahoma","Arial",sans-serif;
+    --accent:#0a64ff;
+  }
+  html,body{height:100%;margin:0;font-family:var(--font);background:var(--bg);color:#000;overflow:hidden}
+  .desktop{padding:12px;min-height:100%;box-sizing:border-box;position:relative}
+  .win{width:720px;background:var(--window-bg);border:2px solid var(--shadow-dark);box-shadow:8px 8px 0 rgba(0,0,0,0.15);position:absolute;left:40px;top:40px;display:flex;flex-direction:column;z-index:100}
+  .titlebar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(var(--titlebar),#000060);color:var(--titlebar-text);padding:4px 6px;font-weight:bold;font-size:14px;border-bottom:2px solid var(--shadow-dark);cursor:move}
+  .title-left{display:flex;align-items:center;gap:8px}
+  .title-icon{width:16px;height:16px;background:linear-gradient(#fff,#c0c0ff);border:1px solid #000}
+  .title-buttons{display:flex;gap:6px}
+  .tb-btn{width:18px;height:16px;background:linear-gradient(#e0e0e0,#b0b0b0);border-top:2px solid var(--shadow-light);border-left:2px solid var(--shadow-light);border-bottom:2px solid var(--shadow-dark);border-right:2px solid var(--shadow-dark);display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer}
+  .content{padding:10px;background:linear-gradient(#dcdcdc,#c8c8c8);flex:1;overflow:auto}
+  .status{display:flex;justify-content:space-between;padding:6px 8px;font-size:12px;border-top:2px solid var(--shadow-dark);background:linear-gradient(#d0d0d0,#bfbfbf)}
+  .app{width:520px;background:var(--window-bg);border:2px solid var(--shadow-dark);box-shadow:6px 6px 0 rgba(0,0,0,0.15);position:absolute;display:none;flex-direction:column}
+  .resizer{width:10px;height:10px;position:absolute;right:0;bottom:0;cursor:se-resize}
+  .btn{display:inline-block;padding:6px 10px;background:linear-gradient(#e0e0e0,#bdbdbd);border-top:2px solid var(--shadow-light);border-left:2px solid var(--shadow-light);border-bottom:2px solid var(--shadow-dark);border-right:2px solid var(--shadow-dark);cursor:pointer}
+  .small{padding:4px 8px;font-size:13px}
+  .list{background:linear-gradient(#fff,#e8e8e8);border-top:2px solid var(--shadow-light);border-left:2px solid var(--shadow-light);border-bottom:2px solid var(--shadow-dark);border-right:2px solid var(--shadow-dark);padding:6px;height:200px;overflow:auto}
+  .list-item{padding:6px;border-radius:2px;cursor:pointer}
+  .iframe-wrap{height:360px;border:1px solid #888;background:#fff;overflow:hidden;position:relative}
+  .iframe-wrap iframe{width:100%;height:100%;border:0}
+  .iframe-overlay{position:absolute;inset:0;background:rgba(255,255,255,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;text-align:center;display:none}
+  .toast{position:fixed;right:12px;top:12px;background:#222;color:#fff;padding:8px 12px;border-radius:4px;opacity:0;transform:translateY(-8px);transition:all .25s;z-index:9999}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .taskbar{position:fixed;left:0;right:0;bottom:0;height:36px;background:linear-gradient(#c0c0c0,#a8a8a8);border-top:2px solid var(--shadow-dark);display:flex;align-items:center;padding:4px 8px;gap:8px;box-sizing:border-box}
+  .start-btn{display:flex;align-items:center;gap:8px;padding:6px 10px;background:linear-gradient(#e0e0e0,#bdbdbd);border-top:2px solid var(--shadow-light);border-left:2px solid var(--shadow-light);border-bottom:2px solid var(--shadow-dark);border-right:2px solid var(--shadow-dark);cursor:pointer}
+  #taskButtons{display:flex;gap:6px;flex:1}
+  .taskButtons .btn.active{outline:2px solid #000}
+  .muted{color:#444;font-size:12px}
+  @media (max-width:1000px){ .win{width:92%} .app{width:90%} }
+</style>
+</head>
+<body>
+  <div class="desktop" id="desktop" tabindex="0">
+    <div class="win" id="mainWin" role="dialog" aria-label="Program Manager" style="left:40px;top:40px;">
+      <div class="titlebar" id="mainTitle">
+        <div class="title-left"><div class="title-icon"></div><div class="title-text">Program Manager</div></div>
+        <div class="title-buttons">
+          <div class="tb-btn" data-action="min">_</div>
+          <div class="tb-btn" data-action="max">▢</div>
+          <div class="tb-btn" data-action="close">✕</div>
+        </div>
+      </div>
+      <div class="content">
+        <div style="display:flex;gap:16px">
+          <div style="width:220px">
+            <div class="muted">デスクトップショートカット</div>
+            <div style="margin-top:8px">
+              <div class="btn small" id="openBrowser">Open Browser</div>
+              <div class="btn small" id="openExplorer">Open Explorer</div>
+              <div class="btn small" id="openNotepad">Open Notepad</div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:bold">Quick Log</div>
+            <div class="list" id="quickLog" style="height:220px; color: red;">System initialized.</div>
+          </div>
+        </div>
+      </div>
+      <div class="status"><div id="statusMain">Ready</div><div id="statusClock" style="font-family:monospace"></div></div>
+    </div>
+
+    <!-- Browser app -->
+    <div class="app" id="appBrowser" role="dialog" aria-label="Browser" style="left:120px;top:120px;width:760px;">
+      <div class="titlebar">
+        <div class="title-left"><div class="title-icon"></div><div class="title-text">Browser</div></div>
+        <div class="title-buttons">
+          <div class="tb-btn app-min" data-action="min">_</div>
+          <div class="tb-btn app-max" data-action="max">▢</div>
+          <div class="tb-btn app-close" data-action="close">✕</div>
+        </div>
+      </div>
+      <div class="content">
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px">
+          <div class="btn small" id="bBack">◀</div>
+          <div class="btn small" id="bForward">▶</div>
+          <div class="btn small" id="bReload">⟳</div>
+          <input class="addr" id="addrBar" value="https://computer-nazo.github.io/nazo/sadako/homepage/index.html" style="flex:1;padding:6px;background:var(--face);border-top:2px solid var(--shadow-light);border-left:2px solid var(--shadow-light);border-bottom:2px solid var(--shadow-dark);border-right:2px solid var(--shadow-dark);font-family:monospace" />
+          <div class="btn small" id="bGo">Go</div>
+          <div class="btn small" id="bOpenNew">外部で開く</div>
+        </div>
+
+        <div class="iframe-wrap" id="iframeWrap">
+          <iframe id="browserFrame" sandbox="allow-scripts allow-forms allow-popups"></iframe>
+          <div class="iframe-overlay" id="iframeOverlay">
+            <div style="font-weight:bold;margin-bottom:8px">このサイトは埋め込みを許可していません</div>
+            <div class="muted" style="margin-bottom:8px">埋め込みがブロックされているため、外部タブで開いてください</div>
+            <div style="display:flex;gap:8px">
+              <div class="btn small" id="overlayOpen">外部で開く</div>
+              <div class="btn small" id="overlayRetry">再読み込み</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <div style="flex:1">
+            <div style="font-weight:bold">History</div>
+            <div class="list" id="browserHistory" style="height:120px"></div>
+          </div>
+          <div style="width:220px">
+            <div style="font-weight:bold">Bookmarks</div>
+            <div class="list" id="bookmarkList" style="height:120px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explorer app (minimal) -->
+    <div class="app" id="appExplorer" role="dialog" aria-label="Explorer" style="left:200px;top:160px;">
+      <div class="titlebar">
+        <div class="title-left"><div class="title-icon"></div><div class="title-text">Explorer</div></div>
+        <div class="title-buttons">
+          <div class="tb-btn app-min" data-action="min">_</div>
+          <div class="tb-btn app-max" data-action="max">▢</div>
+          <div class="tb-btn app-close" data-action="close">✕</div>
+        </div>
+      </div>
+      <div class="content">
+        <div style="font-weight:bold;margin-bottom:6px">Files</div>
+        <div class="list" id="explorerContents" style="height:260px"></div>
+      </div>
+    </div>
+
+    <!-- Notepad app -->
+    <div class="app" id="appNotepad" role="dialog" aria-label="Notepad" style="left:260px;top:200px;">
+      <div class="titlebar">
+        <div class="title-left"><div class="title-icon"></div><div class="title-text">Notepad</div></div>
+        <div class="title-buttons">
+          <div class="tb-btn app-min" data-action="min">_</div>
+          <div class="tb-btn app-max" data-action="max">▢</div>
+          <div class="tb-btn app-close" data-action="close">✕</div>
+        </div>
+      </div>
+      <div class="content">
+        <div style="margin-bottom:6px"><span class="muted">File:</span> <span id="noteFileName" class="muted">(untitled)</span></div>
+        <textarea id="noteArea" style="width:100%;height:220px;box-sizing:border-box;padding:6px;border:1px solid #888;font-family:monospace"></textarea>
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <div class="btn" id="saveNote">Save</div>
+          <div class="btn" id="closeNote">Close</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">Notification</div>
+
+    <div class="taskbar" role="toolbar" aria-label="Taskbar">
+      <div class="start-btn" id="startBtn"><div style="width:18px;height:18px;background:linear-gradient(#fff,#c0c0ff);border:1px solid #000"></div><div>Start</div></div>
+      <div id="taskButtons"></div>
+      <div id="tray" style="display:flex;gap:8px;align-items:center"><div id="trayClock" style="min-width:90px;text-align:right;font-family:monospace"></div></div>
+    </div>
+  </div>
+
+<script>
+/* 共通ユーティリティ */
+const toastEl = document.getElementById('toast');
+function showToast(msg, t=2200){ toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'), t); }
+function log(msg){ const q = document.getElementById('quickLog'); q.textContent += '\\n' + msg; q.scrollTop = q.scrollHeight; }
+
+/* ウィンドウ管理: 最小化/最大化/閉じる を統一実装 */
+function setupWindowControls(winEl){
+  const tbBtns = winEl.querySelectorAll('.tb-btn');
+  // store original rect for restore
+  if(!winEl._orig) winEl._orig = {left: winEl.style.left || winEl.getBoundingClientRect().left + 'px', top: winEl.style.top || winEl.getBoundingClientRect().top + 'px', width: winEl.style.width || winEl.offsetWidth + 'px', height: winEl.style.height || winEl.offsetHeight + 'px'};
+  tbBtns.forEach(btn=>{
+    const action = btn.dataset.action;
+    if(action === 'min'){
+      btn.addEventListener('click', ()=> {
+        winEl.dataset.minimized = 'true';
+        winEl.style.display = 'none';
+        showToast('ウィンドウを最小化しました');
+      });
+    } else if(action === 'max'){
+      btn.addEventListener('click', ()=> {
+        if(winEl.dataset.maxed === 'true'){
+          // restore
+          winEl.style.left = winEl._orig.left;
+          winEl.style.top = winEl._orig.top;
+          winEl.style.width = winEl._orig.width;
+          winEl.style.height = winEl._orig.height;
+          winEl.dataset.maxed = 'false';
+          showToast('ウィンドウを復元しました');
+        } else {
+          // save current
+          winEl._orig.left = winEl.style.left || winEl.getBoundingClientRect().left + 'px';
+          winEl._orig.top = winEl.style.top || winEl.getBoundingClientRect().top + 'px';
+          winEl._orig.width = winEl.style.width || winEl.offsetWidth + 'px';
+          winEl._orig.height = winEl.style.height || winEl.offsetHeight + 'px';
+          // maximize (fit desktop area with margin)
+          const d = document.getElementById('desktop').getBoundingClientRect();
+          winEl.style.left = (d.left + 8) + 'px';
+          winEl.style.top = (d.top + 8) + 'px';
+          winEl.style.width = (d.width - 16) + 'px';
+          winEl.style.height = (d.height - 120) + 'px';
+          winEl.dataset.maxed = 'true';
+          showToast('ウィンドウを最大化しました');
+        }
+      });
+    } else if(action === 'close'){
+      btn.addEventListener('click', ()=> {
+        winEl.style.display = 'none';
+        showToast('ウィンドウを閉じました');
+      });
+    }
+  });
+}
+
+/* ドラッグとリサイズ */
+function makeDraggable(winEl){
+  const title = winEl.querySelector('.titlebar');
+  let dragging=false, ox=0, oy=0;
+  title.addEventListener('pointerdown', (e)=>{
+    dragging=true;
+    bringToFront(winEl);
+    const rect = winEl.getBoundingClientRect();
+    ox = e.clientX - rect.left;
+    oy = e.clientY - rect.top;
+    title.setPointerCapture(e.pointerId);
+  });
+  window.addEventListener('pointermove', (e)=>{
+    if(!dragging) return;
+    let x = e.clientX - ox;
+    let y = e.clientY - oy;
+    const dRect = document.getElementById('desktop').getBoundingClientRect();
+    x = Math.max(dRect.left, Math.min(x, dRect.right - winEl.offsetWidth));
+    y = Math.max(dRect.top, Math.min(y, dRect.bottom - winEl.offsetHeight - 40));
+    winEl.style.left = x + 'px';
+    winEl.style.top = y + 'px';
+    winEl.style.transform = 'none';
+  });
+  window.addEventListener('pointerup', ()=> dragging=false);
+
+  // resizer
+  if(!winEl.querySelector('.resizer')){
+    const res = document.createElement('div'); res.className='resizer'; winEl.appendChild(res);
+    let resizing=false, sx=0, sy=0, sw=0, sh=0;
+    res.addEventListener('pointerdown', (e)=>{
+      resizing=true; bringToFront(winEl);
+      sx = e.clientX; sy = e.clientY; sw = winEl.offsetWidth; sh = winEl.offsetHeight;
+      res.setPointerCapture(e.pointerId);
+    });
+    window.addEventListener('pointermove', (e)=>{
+      if(!resizing) return;
+      const dx = e.clientX - sx; const dy = e.clientY - sy;
+      winEl.style.width = Math.max(240, sw + dx) + 'px';
+      winEl.style.height = Math.max(120, sh + dy) + 'px';
+    });
+    window.addEventListener('pointerup', ()=> resizing=false);
+  }
+}
+
+/* フォーカスで前面化 */
+let zBase = 200;
+function bringToFront(el){ zBase += 1; el.style.zIndex = zBase; }
+
+/* タスクボタン作成/トグル */
+function addTaskButton(winId, title){
+  const container = document.getElementById('taskButtons');
+  if(container.querySelector('[data-win="'+winId+'"]')) return;
+  const btn = document.createElement('div'); btn.className='btn small'; btn.textContent = title; btn.dataset.win = winId;
+  btn.addEventListener('click', ()=>{
+    const w = document.getElementById(winId);
+    if(!w) return;
+    if(getComputedStyle(w).display === 'none'){ w.style.display='flex'; bringToFront(w); showToast(title + ' を復元しました'); }
+    else { w.style.display='none'; showToast(title + ' を最小化しました'); }
+  });
+  container.appendChild(btn);
+}
+
+/* 初期ウィンドウ設定 */
+const windows = document.querySelectorAll('.win, .app');
+windows.forEach(w=>{
+  setupWindowControls(w);
+  makeDraggable(w);
+  addTaskButton(w.id, (w.querySelector('.title-text') ? w.querySelector('.title-text').textContent : w.id));
+  // clickで前面化
+  w.addEventListener('pointerdown', ()=> bringToFront(w));
+});
+
+/* メインウィンドウのボタン */
+document.querySelectorAll('#mainWin .tb-btn').forEach(b=>{
+  b.addEventListener('click', ()=> {}); // 個別処理は setupWindowControls が担当
+});
+
+/* アプリ起動ボタン */
+document.getElementById('openBrowser').addEventListener('click', ()=> openApp('appBrowser'));
+document.getElementById('openExplorer').addEventListener('click', ()=> openApp('appExplorer'));
+document.getElementById('openNotepad').addEventListener('click', ()=> openApp('appNotepad'));
+
+/* openApp 共通 */
+function openApp(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display = 'flex';
+  bringToFront(el);
+  // restore if minimized flag present
+  if(el.dataset.minimized === 'true'){ el.dataset.minimized = 'false'; }
+  // ensure task button exists
+  addTaskButton(id, el.querySelector('.title-text') ? el.querySelector('.title-text').textContent : id);
+}
+
+/* タスクボタンの初期化は既に行われているが、表示状態に応じて active を付与 */
+function refreshTaskButtons(){
+  document.querySelectorAll('#taskButtons .btn').forEach(btn=>{
+    const win = document.getElementById(btn.dataset.win);
+    if(win && getComputedStyle(win).display !== 'none') btn.classList.add('active'); else btn.classList.remove('active');
+  });
+}
+setInterval(refreshTaskButtons, 500);
+
+/* トースト */
+function showToastOnce(msg){ showToast(msg); log(msg); }
+
+/* 時計 */
+function updateClock(){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mm = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('trayClock').textContent = hh + ':' + mm + ':' + ss;
+  document.getElementById('statusClock').textContent = hh + ':' + mm + ':' + ss;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ---------------------------
+   ブラウザ機能（iframe） — 埋め込み拒否検出とフォールバック
+   --------------------------- */
+const frame = document.getElementById('browserFrame');
+const addr = document.getElementById('addrBar');
+const overlay = document.getElementById('iframeOverlay');
+const historyEl = document.getElementById('browserHistory');
+const bookmarkEl = document.getElementById('bookmarkList');
+let browserHistory = [], historyIndex = -1, bookmarks = [];
+
+function setOverlayVisible(visible, reason){
+  overlay.style.display = visible ? 'flex' : 'none';
+  if(visible && reason) overlay.querySelector('.muted').textContent = reason;
+}
+
+/* iframe 読み込み後にクロスオリジンでアクセス可能かを検査 */
+frame.addEventListener('load', ()=>{
+  // try to access a property to detect cross-origin blocking
+  let allowed = true;
+  try{
+    // accessing location.href of iframe will throw if cross-origin
+    const href = frame.contentWindow.location.href;
+    // some browsers return "about:blank" for empty src; treat as allowed
+    if(!href || href === 'about:blank') allowed = true;
+  }catch(e){
+    allowed = false;
+  }
+  if(!allowed){
+    setOverlayVisible(true, 'このサイトは埋め込みを許可していません');
+    showToast('埋め込みがブロックされました');
+    setOverlayVisible(false);
+    showToast('ページを読み込みました');
+  } else {
+    setOverlayVisible(false);
+    showToast('ページを読み込みました');
+  }
+});
+
+/* URL をロードして履歴に追加 */
+function loadURL(url, pushHistory=true){
+  if(!url) return;
+  if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+  addr.value = url;
+  // set iframe src
+  frame.src = url;
+  // update history
+  if(pushHistory){
+    browserHistory = browserHistory.slice(0, historyIndex + 1);
+    browserHistory.push(url);
+    historyIndex = browserHistory.length - 1;
+    renderHistory();
+  }
+  // overlay はロード後に判定されるため一旦非表示
+  setOverlayVisible(false);
+}
+
+/* 履歴表示 */
+function renderHistory(){
+  historyEl.innerHTML = '';
+  for(let i = browserHistory.length - 1; i >= 0; i--){
+    const u = browserHistory[i];
+    const el = document.createElement('div'); el.className='list-item'; el.textContent = u;
+    el.addEventListener('click', ()=> { historyIndex = i; loadURL(browserHistory[i], false); });
+    historyEl.appendChild(el);
+  }
+}
+
+/* ブックマーク表示 */
+function renderBookmarks(){
+  bookmarkEl.innerHTML = '';
+  bookmarks.forEach(b=>{
+    const btn = document.createElement('div'); btn.className='btn small'; btn.textContent = b;
+    btn.addEventListener('click', ()=> loadURL(b));
+    bookmarkEl.appendChild(btn);
+  });
+}
+
+/* コントロール */
+document.getElementById('bGo').addEventListener('click', ()=> loadURL(addr.value));
+document.getElementById('bReload').addEventListener('click', ()=> { frame.src = frame.src; setOverlayVisible(false); });
+document.getElementById('bBack').addEventListener('click', ()=> { if(historyIndex > 0){ historyIndex--; loadURL(browserHistory[historyIndex], false); } });
+document.getElementById('bForward').addEventListener('click', ()=> { if(historyIndex < browserHistory.length - 1){ historyIndex++; loadURL(browserHistory[historyIndex], false); } });
+document.getElementById('bOpenNew').addEventListener('click', ()=> { const u = addr.value || frame.src; if(u) window.open(u, '_blank'); });
+document.getElementById('overlayOpen').addEventListener('click', ()=> { const u = addr.value || frame.src; if(u) window.open(u, '_blank'); });
+document.getElementById('overlayRetry').addEventListener('click', ()=> { frame.src = addr.value || frame.src; setOverlayVisible(false); });
+
+/* ブックマーク追加 */
+document.getElementById('bookmarkList'); // element exists
+document.getElementById('bGo').addEventListener('click', ()=> { /* handled above */ });
+document.getElementById('bOpenNew').addEventListener('click', ()=> {});
+// add bookmark via context: double-click address bar
+addr.addEventListener('dblclick', ()=> {
+  const u = addr.value;
+  if(u && !bookmarks.includes(u)){ bookmarks.push(u); renderBookmarks(); showToast('ブックマークに追加しました'); }
+});
+
+/* 初期ロード */
+loadURL('https://computer-nazo.github.io/nazo/sadako/homepage/index.html');
+
+/* ---------------------------
+   Explorer の簡易ファイル表示
+   --------------------------- */
+const explorerContents = document.getElementById('explorerContents');
+let files = [{name:'readme.txt', size:1024},{name:'notes.txt', size:2048}];
+function renderFiles(){
+  explorerContents.innerHTML = '';
+  files.forEach(f=>{
+    const el = document.createElement('div'); el.className='list-item'; el.textContent = f.name + ' (' + f.size + ' bytes)';
+    el.addEventListener('dblclick', ()=> {
+      openApp('appNotepad');
+      document.getElementById('noteArea').value = '仮想ファイル: ' + f.name + '\\nサイズ: ' + f.size;
+      document.getElementById('noteFileName').textContent = f.name;
+    });
+    explorerContents.appendChild(el);
+  });
+}
+renderFiles();
+
+/* Notepad 保存 */
+document.getElementById('saveNote').addEventListener('click', ()=>{
+  const name = document.getElementById('noteFileName').textContent || ('note_' + Date.now() + '.txt');
+  const content = document.getElementById('noteArea').value;
+  files.push({name, size: content.length});
+  renderFiles();
+  showToast('Saved ' + name);
+});
+document.getElementById('closeNote').addEventListener('click', ()=> { document.getElementById('appNotepad').style.display='none'; });
+
+/* タスクボタンの初期化: 既存ウィンドウ分は setupWindowControls 内で追加済み */
+
+/* キーボードショートカット */
+document.addEventListener('keydown', (e)=>{
+  if(e.ctrlKey && e.key.toLowerCase() === 'n'){ e.preventDefault(); openApp('appNotepad'); }
+  if(e.ctrlKey && e.key.toLowerCase() === 't'){ e.preventDefault(); openApp('appBrowser'); }
+  if(e.ctrlKey && e.key.toLowerCase() === 'w'){ e.preventDefault(); // 最前面の app を閉じる
+    const apps = Array.from(document.querySelectorAll('.app')).filter(a=>getComputedStyle(a).display !== 'none');
+    if(apps.length) apps[apps.length-1].style.display='none';
+  }
+  if(e.key === 'Escape'){ document.getElementById('startBtn').dispatchEvent(new Event('click')); }
+});
+
+/* Start メニュー（簡易） */
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  const menu = document.getElementById('startBtn').nextElementSibling;
+  if(menu && menu.style.display === 'block') menu.style.display = 'none'; else if(menu) menu.style.display = 'block';
+});
+document.addEventListener('click', (e)=> {
+  const menu = document.getElementById('startBtn').nextElementSibling;
+  if(menu && !menu.contains(e.target) && !document.getElementById('startBtn').contains(e.target)) menu.style.display = 'none';
+});
+
+openApp ('appBrowser');
+
+/* 初期メッセージ */
+showToast('');
+log('注意：ブラウザを開いてください！！');
+</script>
+</body>
+</html>
